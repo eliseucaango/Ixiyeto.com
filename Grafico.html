@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IxiYeto Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Incluindo a biblioteca Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Incluindo o plugin de zoom do Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+</head>
+<body>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 250px;
+    padding: 20px;
+    color: white;
+}
+
+.logo h1 {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    margin: 15px 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+    display: block;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+nav ul li a:hover, nav ul li a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+main {
+    flex-grow: 1;
+    padding: 20px;
+    background-image: url('background-image.jpg'); /* Imagem de fundo */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.welcome-message h2 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    width: 80%;
+    margin: auto;
+}
+
+canvas {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Adiciona sombra ao gráfico */
+}
+
+    </style>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Ixi<span style="color: orange;">Yeto</span>.</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Início</a></li>
+                    <li><a href="#">Tarefas</a></li>
+                    <li><a href="#">Mensagens</a></li>
+                    <li><a href="#">Calendário de eventos</a></li>
+                    <li><a href="#">Report & Analytics</a></li>
+                    <li><a href="#">Configurações</a></li>
+                    <li><a href="#">Ajuda</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main>
+            <div class="welcome-message">
+                <h2>Bem vindo de volta!</h2>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="currencyChart"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript para o gráfico -->
+    <script>// Função para gerar dados fictícios simulando mercado de moedas
+        const generateRandomData = (numPoints) => {
+            let data = [];
+            let initialPrice = Math.random() * 100;
+            for (let i = 0; i < numPoints; i++) {
+                let change = (Math.random() - 0.5) * 5; // Variação aleatória no valor
+                initialPrice += change;
+                data.push(initialPrice.toFixed(2));
+            }
+            return data;
+        };
+        
+        // Configurações do gráfico
+        const labels = Array.from({length: 20}, (_, i) => `Dia ${i + 1}`);
+        const data1 = generateRandomData(20);
+        const data2 = generateRandomData(20);
+        
+        const ctx = document.getElementById('currencyChart').getContext('2d');
+        const currencyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Moeda 1',
+                    data: data1,
+                    borderColor: '#1e88e5',
+                    backgroundColor: 'rgba(30, 136, 229, 0.2)',
+                    fill: true,
+                    tension: 0.4, // Linha suavizada
+                    borderWidth: 2
+                }, {
+                    label: 'Moeda 2',
+                    data: data2,
+                    borderColor: '#e53935',
+                    backgroundColor: 'rgba(229, 57, 53, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 2000, // Duração da animação
+                    easing: 'easeInOutQuad' // Efeito de animação
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        beginAtZero: false
+                    }
+                },
+                plugins: {
+                    zoom: {
+                        zoom: {
+                            wheel: {
+                                enabled: true // Permite zoom com a roda do mouse
+                            },
+                            pinch: {
+                                enabled: true // Permite zoom por pinça em dispositivos touch
+                            },
+                            mode: 'xy', // Permite zoom tanto no eixo x quanto no y
+                        },
+                        pan: {
+                            enabled: true, // Permite mover o gráfico
+                            mode: 'xy',
+                            speed: 20, // Velocidade do movimento ao arrastar
+                        }
+                    }
+                }
+            }
+        });
+        </script>
+</body>
+</html>

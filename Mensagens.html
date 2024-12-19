@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Mensagens</title>
+    <!-- Link para Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        background: url(background.png);
+            background-position: center;
+            margin: 0;
+            color: white;
+            display: flex;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            height: 90vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar a {
+            color: #fff;
+            padding: 15px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #f1c40f;
+            color: #000;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 300px;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: #f1c40f;
+        }
+
+        .user-info {
+            font-size: 18px;
+        }
+
+        .messages {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .message-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .message-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .message-title {
+            font-size: 20px;
+            color: #f1c40f;
+            margin-bottom: 5px;
+        }
+
+        .message-time {
+            font-size: 14px;
+            color: #bfbfbf;
+        }
+
+        .btn-add-message {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #f1c40f;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-add-message:hover {
+            background-color: #d4ac0d;
+        }
+        .mol{
+            background-color: #2e2d2d;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="Captura_de_Tela__18_-removebg-preview.png" alt="">
+        <a href="#"><i class="fas fa-home"></i>Início</a>
+        <a href="#"><i class="fas fa-tasks"></i>Tarefas</a>
+       <span class="mol"> <a href="#"><i class="fas fa-envelope"></i>Mensagens</a></span>
+        <a href="Calendario.html"><i class="fas fa-calendar-alt"></i>Calendário de eventos</a>
+        <a href="#"><i class="fas fa-chart-line"></i>Report & Análises</a>
+        <a href="#"><i class="fas fa-cog"></i>Configurações</a>
+        <a href="#"><i class="fas fa-question-circle"></i>Ajuda</a>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <input type="text" class="search-box" placeholder="Pesquisar...">
+            <div class="user-info">Crísten Van-damem</div>
+        </div>
+
+        <div class="messages" id="messageContainer">
+            <h2>Novas mensagens</h2>
+            <!-- As mensagens serão inseridas aqui dinamicamente -->
+        </div>
+
+        <button class="btn-add-message" onclick="addMessage()">Adicionar Mensagem</button>
+    </div>
+
+    <script>
+        const messages = [
+            {
+                title: 'Solicitação de passagem de terreno',
+                time: '45min'
+            },
+            {
+                title: 'Solicitação de passagem de terreno',
+                time: '45min'
+            },
+            {
+                title: 'Solicitação de passagem de terreno',
+                time: '45min'
+            },
+            {
+                title: 'Solicitação de passagem de terreno',
+                time: '45min'
+            }
+        ];
+
+        function loadMessages() {
+            const container = document.getElementById('messageContainer');
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message-item';
+                messageDiv.innerHTML = `
+                    <div class="message-title">${message.title}</div>
+                    <div class="message-time">${message.time}</div>
+                `;
+                container.appendChild(messageDiv);
+            });
+        }
+
+        function addMessage() {
+            const container = document.getElementById('messageContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-item';
+            messageDiv.innerHTML = `
+                <div class="message-title">Nova Mensagem</div>
+                <div class="message-time">Agora</div>
+            `;
+            container.appendChild(messageDiv);
+        }
+
+        // Carrega as mensagens ao iniciar
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>

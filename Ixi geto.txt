@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Mensagens e Calendário</title>
+    <!-- Link para Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url(background.png) no-repeat center center/cover;
+            margin: 0;
+            color: white;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar a {
+            color: #fff;
+            padding: 15px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #f1c40f;
+            color: #000;
+            transform: translateX(10px);
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 300px;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: #f1c40f;
+        }
+
+        .mol {
+            background-color: #2e2d2d;
+            border-radius: 5px;
+        }
+
+        .messages, .calendar {
+            background-color: rgba(26, 25, 25, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .messages.active, .calendar.active {
+            display: block;
+        }
+
+        .messages h2, .calendar h2 {
+            color: #f1c40f;
+            margin-bottom: 20px;
+        }
+
+        .message-item, .calendar td {
+            padding: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .message-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .calendar td:hover {
+            background-color: #f1c40f;
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .btn-add-message {
+            padding: 10px 20px;
+            background-color: #f1c40f;
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-add-message:hover {
+            background-color: #d4ac0d;
+        }
+
+        .navigation button {
+            background-color: rgba(255, 165, 0, 0.7);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            margin: 0 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .navigation button:hover {
+            background-color: rgba(255, 165, 0, 0.9);
+        }
+
+        .current-day {
+            background-color: rgba(255, 165, 0, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="#" onclick="showSection('messages')"><i class="fas fa-envelope"></i>Mensagens</a>
+        <a href="#" onclick="showSection('calendar')"><i class="fas fa-calendar-alt"></i>Calendário de eventos</a>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <input type="text" class="search-box" placeholder="Pesquisar...">
+            <div class="user-info">Crísten Van-damem</div>
+        </div>
+
+        <!-- Seção de Mensagens -->
+        <div class="messages active" id="messagesSection">
+            <h2>Novas Mensagens</h2>
+            <div id="messageContainer"></div>
+            <button class="btn-add-message" onclick="addMessage()">Adicionar Mensagem</button>
+        </div>
+
+        <!-- Seção de Calendário -->
+        <div class="calendar" id="calendarSection">
+            <h2>Calendário</h2>
+            <div class="navigation">
+                <button id="prevMonth">&lt;</button>
+                <span id="monthName"></span>
+                <button id="nextMonth">&gt;</button>
+            </div>
+            <div id="calendarContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Função para alternar entre seções
+        function showSection(section) {
+            document.getElementById('messagesSection').classList.remove('active');
+            document.getElementById('calendarSection').classList.remove('active');
+            document.getElementById(section + 'Section').classList.add('active');
+        }
+
+        // Mensagens
+        const messages = [
+            { title: 'Solicitação de passagem de terreno', time: '45min' },
+            { title: 'Solicitação de compra', time: '2h' }
+        ];
+
+        function loadMessages() {
+            const container = document.getElementById('messageContainer');
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message-item';
+                messageDiv.innerHTML = `
+                    <div class="message-title">${message.title}</div>
+                    <div class="message-time">${message.time}</div>
+                `;
+                container.appendChild(messageDiv);
+            });
+        }
+
+        function addMessage() {
+            const container = document.getElementById('messageContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-item';
+            messageDiv.innerHTML = `
+                <div class="message-title">Nova Mensagem</div>
+                <div class="message-time">Agora</div>
+            `;
+            container.appendChild(messageDiv);
+        }
+
+        // Calendário
+        const calendarContainer = document.getElementById('calendarContainer');
+        const monthNameElement = document.getElementById('monthName');
+        const prevMonthButton = document.getElementById('prevMonth');
+        const nextMonthButton = document.getElementById('nextMonth');
+
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        function renderCalendar(month, year) {
+            calendarContainer.innerHTML = ''; // Limpar calendário anterior
+            monthNameElement.textContent = `${months[month]} ${year}`;
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDay = new Date(year, month, 1).getDay();
+
+            let table = '<table>';
+            table += '<tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr><tr>';
+
+            let i;
+            for (i = 0; i < firstDay; i++) {
+                table += '<td></td>'; // Preencher dias vazios no início
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                if (i % 7 === 0) {
+                    table += '</tr><tr>';
+                }
+
+                const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFull
